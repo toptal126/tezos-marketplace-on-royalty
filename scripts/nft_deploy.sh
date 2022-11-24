@@ -2,7 +2,7 @@
 
 _PATH="~/Documents/tezos-marketplace-smartpy"
 
-echo $1
+rm compilation -r & ~/smartpy-cli/SmartPy.sh compile ./contracts/LimitedNFT.py compilation
 
 ~/smartpy-cli/SmartPy.sh originate-contract \
     --code ~/Documents/tezos-marketplace-smartpy/compilation/NFTWithArtists_Compiled/step_000_cont_0_contract.tz \
