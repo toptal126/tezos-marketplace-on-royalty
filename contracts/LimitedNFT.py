@@ -68,6 +68,9 @@ class ArtistMintNFT(sp.Contract):
     Requires the `Admin` mixin.
     """
 
+    def __init__(self, token_royalties={}):
+        self.update_initial_storage(token_royalties=sp.big_map(token_royalties, tkey=sp.TNat, tvalue=sp.TNat))
+
     @sp.entry_point
     def mint(self, batch):
         """Artist can mint new or existing tokens."""
@@ -77,7 +80,8 @@ class ArtistMintNFT(sp.Contract):
                 sp.TRecord(
                     to_=sp.TAddress,
                     metadata=sp.TMap(sp.TString, sp.TBytes),
-                ).layout(("to_", "metadata"))
+                    royalty=sp.TNat
+                ).layout(("royalty", ("to_", "metadata")))
             ),
         )
         sp.verify(self.is_artist(sp.sender), "ArtistsStorage: Not a Artist")
@@ -88,6 +92,10 @@ class ArtistMintNFT(sp.Contract):
             self.data.token_metadata[token_id] = metadata
             self.data.ledger[token_id] = action.to_
             self.data.minters[token_id] = sp.sender
+
+            sp.verify(action.royalty <= 15, "Invalid Royalty")
+            self.data.token_royalties[token_id] = action.royalty
+
             self.data.last_token_id += 1
 
 
@@ -96,6 +104,7 @@ class NFTWithArtists(FA2.Admin, FA2.WithdrawMutez, ArtistMintNFT, FA2.Fa2Nft, Ar
         FA2.Fa2Nft.__init__(self, metadata, token_metadata)
         FA2.Admin.__init__(self, admin)
         ArtistStorage.__init__(self, artists)
+        ArtistMintNFT.__init__(self, {})
 
     @sp.entry_point
     def minter_of(self, params):
