@@ -69,7 +69,8 @@ class ArtistMintNFT(sp.Contract):
     """
 
     def __init__(self, token_royalties={}):
-        self.update_initial_storage(token_royalties=sp.big_map(token_royalties, tkey=sp.TNat, tvalue=sp.TNat))
+        self.update_initial_storage(token_royalties=sp.big_map(
+            token_royalties, tkey=sp.TNat, tvalue=sp.TNat))
 
     @sp.entry_point
     def mint(self, batch):
@@ -115,7 +116,8 @@ class NFTWithArtists(FA2.Admin, FA2.WithdrawMutez, ArtistMintNFT, FA2.Fa2Nft, Ar
             with sp.if_(sp.fst(artist) == self.data.minters[params.token_id]):
                 _artist.value = artist
 
-        sp.transfer(_artist.value, sp.mutez(0), params.callback)
+        sp.transfer(sp.pair(sp.fst(_artist.value), self.data.token_royalties[params.token_id]), sp.mutez(
+            0), params.callback)
 
 
 tok0_md = sp.map(l={
@@ -138,8 +140,8 @@ def test():
 sp.add_compilation_target("NFTWithArtists_Compiled", NFTWithArtists(
     admin=sp.address("tz1i66XefcqsNVSGa2iFsWb8qxokm3neVpFR"),
     artists=sp.list([
-        sp.pair(artist1, 500),
-        sp.pair(artist2, 1000)
+        sp.pair(artist1, 0),
+        sp.pair(artist2, 0)
     ]),
     metadata=sp.utils.metadata_of_url(
         "ipfs://bafkreigb6nsuvwc7vzx6oqzoaeaxno6liyr5rigbheg2ol7ndac75kawoe"

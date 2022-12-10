@@ -13,7 +13,7 @@ T_BALANCE_OF_REQUEST = sp.TRecord(owner=sp.TAddress, token_id=sp.TNat).layout(
 )
 
 GHOSTNET_ADDRESSES = {
-    "ArtistsNFT": sp.address("KT1JPii4DP4o2A4wvT193tqKM6D6f3Ki276e"),
+    "ArtistsNFT": sp.address("KT1KVkLkevQhW126HeUiLiNiWnK9E5Gu6zL3"),
     "Vault": sp.address("KT1NCMAbF1TNBnKKUQFgjPpjA7pXK27Dc2Gq")
 }
 
@@ -226,7 +226,8 @@ def test():
         sp.record(to_=artist1.address,
                   metadata={
                       "": Utils.Bytes.of_string("ipfs://QmWoCRq4iXnUwzMF2JUUxSbXsTSiuitxvWiYQ27XXusfNu/0.json")
-                  })
+                  },
+                  royalty=10)
     ]).run(
         sender=artist1
     )
