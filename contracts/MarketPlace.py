@@ -85,7 +85,8 @@ class NftOwnerCheck:
 
         royalty_mutez = sp.local(
             'royalty_mutez', sp.split_tokens(self.data.temp_offer_amount, sp.snd(result),  10000))
-        sp.send(sp.fst(result), royalty_mutez.value)
+        with sp.if_(royalty_mutez.value > sp.mutez(0)):
+            sp.send(sp.fst(result), royalty_mutez.value)
         sp.send(self.data.orders_map[self.data.temp_token_id].owner,
                 self.data.temp_offer_amount - platform_mutez.value - royalty_mutez.value)
 
